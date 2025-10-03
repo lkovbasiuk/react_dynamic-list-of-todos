@@ -1,14 +1,29 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Loader } from '../Loader';
+import { getUser } from '../../api';
 
 export const TodoModal: React.FC = () => {
+  const [user, setUser] = useState<User>();
+  const [isUserLoading, setIsUserLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+
+  useEffect(() => {
+    setIsUserLoading(true);
+    getUser()
+      .then(data => {
+        setUser(data);
+      })
+      .catch(() => setErrorMessage('Try again later'))
+      .finally(() => setIsUserLoading(false));
+  }, []);
+
   return (
     <div className="modal is-active" data-cy="modal">
       <div className="modal-background" />
 
-      {true ? (
-        <Loader />
-      ) : (
+      {isUserLoading && <Loader />}
+
+      {!isUserLoading && !errorMessage && (
         <div className="modal-card">
           <header className="modal-card-head">
             <div
@@ -33,7 +48,7 @@ export const TodoModal: React.FC = () => {
 
               {' by '}
 
-              <a href="mailto:Sincere@april.biz">Leanne Graham</a>
+              <a href="mailto:Sincere@april.biz">{user?.name}</a>
             </p>
           </div>
         </div>
