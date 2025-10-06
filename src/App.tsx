@@ -4,8 +4,6 @@ import 'bulma/css/bulma.css';
 import '@fortawesome/fontawesome-free/css/all.css';
 
 import { TodoList } from './components/TodoList';
-import { TodoFilter } from './components/TodoFilter';
-import { TodoModal } from './components/TodoModal';
 
 export const App: React.FC = () => {
   return (
@@ -15,9 +13,7 @@ export const App: React.FC = () => {
           <div className="box">
             <h1 className="title">Todos:</h1>
 
-            <div className="block">
-              <TodoFilter />
-            </div>
+            <div className="block"></div>
 
             <div className="block">
               <TodoList />
@@ -25,8 +21,6 @@ export const App: React.FC = () => {
           </div>
         </div>
       </div>
-
-      <TodoModal />
     </>
   );
 };
