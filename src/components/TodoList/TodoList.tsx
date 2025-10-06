@@ -3,11 +3,14 @@ import { getTodos } from '../../api';
 import { Todo } from '../../types/Todo';
 import cn from 'classnames';
 import { Loader } from '../Loader';
+import { TodoModal } from '../TodoModal';
+import { TodoFilter } from '../TodoFilter';
 
 export const TodoList: React.FC = () => {
   const [todos, setTodos] = useState<Todo[]>([]);
   const [isTodoLoading, setIsTodoLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [selectedTodo, setSelectedTodo] = useState<Todo | null>(null);
 
   useEffect(() => {
     setIsTodoLoading(true);
@@ -43,20 +46,34 @@ export const TodoList: React.FC = () => {
               <tr
                 key={todo.id}
                 data-cy="todo"
-                className={cn(
-                  todo.id % 2 === 0 ? 'has-background-info-light' : '',
-                )}
+                className={cn(selectedTodo ? 'has-background-info-light' : '')}
               >
                 <td className="is-vcentered">{todo.id}</td>
-                <td className="is-vcentered" />
+                <td className="is-vcentered">
+                  {todo.completed && (
+                    <span className="icon">
+                      <i className="fas fa-check" />
+                    </span>
+                  )}
+                </td>
+
                 <td className="is-vcentered is-expanded">
-                  <p className="has-text-danger">{todo.title}</p>
+                  <p
+                    className={cn(
+                      todo.completed ? 'has-text-success' : 'has-text-danger',
+                    )}
+                  >
+                    {todo.title}
+                  </p>
                 </td>
                 <td className="has-text-right is-vcentered">
                   <button
                     data-cy="selectButton"
                     className="button"
                     type="button"
+                    onClick={() => {
+                      setSelectedTodo(todo);
+                    }}
                   >
                     <span className="icon">
                       <i className="far fa-eye" />
@@ -70,6 +87,18 @@ export const TodoList: React.FC = () => {
       )}
 
       {errorMessage && <p>{errorMessage}</p>}
+
+      {selectedTodo && (
+        <TodoModal
+          todoTitle={selectedTodo.title}
+          userId={selectedTodo.userId}
+          todoId={selectedTodo.id}
+          isOpen={!!selectedTodo}
+          onClose={() => setSelectedTodo(null)}
+        />
+      )}
+
+      {todos && <TodoFilter todoCompleted={todos.completed} />}
     </>
   );
 };
